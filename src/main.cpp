@@ -64,10 +64,10 @@ int main(int argc, char *argv[]) {
                     break;
 
                 else if (event.type == SDL_KEYDOWN)
-                    cpu.press_key(key->second);
+                    cpu.keys[key->second] = true;
 
                 else if (event.type == SDL_KEYUP)
-                    cpu.release_key(key->second);
+                    cpu.keys[key->second] = false;
             }
         }
 

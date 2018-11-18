@@ -20,8 +20,6 @@ private:
     uint8_t delay_timer;
     uint8_t sound_timer;
 
-    uint16_t keys; // store key presses
-
     static constexpr std::array<uint8_t, 16 * 5> font_set{
             0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
             0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -127,9 +125,7 @@ public:
 
     void cycle();
 
-    void press_key(int);
-
-    void release_key(int);
+    std::bitset<16> keys; // store key presses
 
     bool redraw;
     bool beep;

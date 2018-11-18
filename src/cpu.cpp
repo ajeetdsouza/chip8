@@ -45,16 +45,6 @@ void Cpu::cycle() {
     run_timers();
 }
 
-// Press a key between 0x0 and 0xF
-void Cpu::press_key(const int key) {
-    keys |= 1 << key;
-}
-
-// Release a key between 0x0 and 0xF
-void Cpu::release_key(const int key) {
-    keys &= ~(1 << key);
-}
-
 // Fetch one opcode
 uint16_t Cpu::get_opcode() const {
     return (mem[pc] << 8) | mem[pc + 1]; // big-endian
@@ -377,7 +367,7 @@ void Cpu::opcode_0xDXYN(const uint16_t opcode) {
 
 /* Skips the next instruction if the key stored in VX is pressed. */
 void Cpu::opcode_0xEX9E(const uint16_t opcode) {
-    if (keys & (1 << v[X]))
+    if (keys[v[X]])
         pc += 4;
     else
         pc += 2;
@@ -385,7 +375,7 @@ void Cpu::opcode_0xEX9E(const uint16_t opcode) {
 
 /* Skips the next instruction if the key stored in VX isn't pressed. */
 void Cpu::opcode_0xEXA1(const uint16_t opcode) {
-    if (keys & (1 << v[X]))
+    if (keys[v[X]])
         pc += 2;
     else
         pc += 4;
@@ -401,9 +391,8 @@ void Cpu::opcode_0xFX07(const uint16_t opcode) {
  * This is a blocking operation.
  * All instructions are halted until the next key event. */
 void Cpu::opcode_0xFX0A(const uint16_t opcode) {
-    if (!keys) return;
     for (auto keys_i = 0; keys_i < 0xF; ++keys_i) {
-        if (keys & (1 << keys_i)) {
+        if (keys[keys_i]) {
             v[X] = static_cast<uint8_t>(keys_i);
             pc += 2;
             return;
