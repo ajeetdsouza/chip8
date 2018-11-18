@@ -3,9 +3,7 @@
 
 #include <array>
 #include <bitset>
-#include <iostream>
 #include <string>
-
 
 class Cpu {
 private:

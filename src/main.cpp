@@ -1,9 +1,9 @@
-#include <iostream>
-#include <unordered_map>
+#include "../include/cpu.hpp"
 
 #include <SDL2/SDL.h>
 
-#include "../include/cpu.hpp"
+#include <iostream>
+#include <unordered_map>
 
 const std::unordered_map<SDL_Keycode, int> keymap = {
         {SDLK_x, 0x0},

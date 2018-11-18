@@ -1,10 +1,10 @@
+#include "../include/cpu.hpp"
+
 #include <algorithm>
 #include <array>
 #include <fstream>
 #include <iostream>
 #include <string>
-
-#include "../include/cpu.hpp"
 
 #define X ((opcode & 0x0F00) >> 8)
 #define Y ((opcode & 0x00F0) >> 4)
