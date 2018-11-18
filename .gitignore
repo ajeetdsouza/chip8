@@ -1,0 +1,4 @@
+*.ch8
+cmake-build-debug/
+.idea/
+.vscode/
