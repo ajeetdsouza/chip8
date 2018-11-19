@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <link rel="stylesheet" href="styles.css">
+
+    <script src="util.js"></script>
+    <script>
+        window.onload = listRom;
+    </script>
+</head>
+
+<body>
+<canvas id="chip8-display" oncontextmenu="event.preventDefault()"></canvas>
+<script>
+    var Module = {canvas: document.getElementById('chip8-display')};
+</script>
+<script src="chip8.js"></script>
+
+<div style="text-align: center">
+    <p>A CHIP8 emulator in C++17/SDL2/WebAssembly</p>
+    <p>
+        <a href="https://github.com/ajeetdsouza/chip8">Source code</a>
+        <a href="#" onclick="Module.requestFullScreen(true, false)">Fullscreen</a>
+    </p>
+    <select title="Select ROM" id="rom-selector"></select>
+    <button onclick="loadRom()">Load</button>
+</div>
+
+</body>
+
+</html>

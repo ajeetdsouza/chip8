@@ -117,11 +117,9 @@ private:
     void opcode_0xFX65(uint16_t);
 
 public:
-    Cpu();
+    Cpu(const std::string &);
 
     const decltype(frame_buf_) &frame_buf; // read-only frame buffer
-
-    void load(const std::string &);
 
     void cycle();
 

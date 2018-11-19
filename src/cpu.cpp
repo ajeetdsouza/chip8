@@ -1,4 +1,4 @@
-#include "../include/cpu.hpp"
+#include "cpu.hpp"
 
 #include <algorithm>
 #include <array>
@@ -13,7 +13,7 @@
 #define NN (opcode & 0x00FF)
 #define NNN (opcode & 0x0FFF)
 
-Cpu::Cpu()
+Cpu::Cpu(const std::string &fname)
         : beep(false),
           delay_timer(),
           frame_buf_(),
@@ -28,10 +28,6 @@ Cpu::Cpu()
           stack(),
           v() {
     std::copy(font_set.begin(), font_set.end(), mem.begin() + 0x50);
-}
-
-// Load a ROM into memory
-void Cpu::load(const std::string &fname) {
     std::ifstream file(fname, std::ios::binary);
     std::copy(std::istreambuf_iterator<char>(file),
               std::istreambuf_iterator<char>(), mem.begin() + 0x200);

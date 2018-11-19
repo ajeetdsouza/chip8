@@ -1,5 +1,6 @@
-#include "../include/cpu.hpp"
+#include "cpu.hpp"
 
+#include <emscripten.h>
 #include <SDL2/SDL.h>
 
 #include <iostream>
@@ -24,74 +25,76 @@ const std::unordered_map<SDL_Keycode, int> keymap = {
         {SDLK_v, 0xF}
 };
 
+Cpu *cpu = nullptr;
+SDL_Renderer *renderer = nullptr;
+
+extern "C" {
+    void load_rom(const std::string& fname) {
+        delete cpu;
+        cpu = new Cpu(fname);
+    }
+}
+
+void main_loop() {
+    // Check if CPU is initialized
+    if (cpu == nullptr)
+        return;
+
+    // Get keypresses
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+       if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
+           const auto key = keymap.find(event.key.keysym.sym);
+           if (key == keymap.end())
+               break;
+
+           else if (event.type == SDL_KEYDOWN)
+               cpu->keys[key->second] = true;
+
+           else if (event.type == SDL_KEYUP)
+               cpu->keys[key->second] = false;
+       }
+   }
+
+    // Assuming the browser refreshes the screen at 60Hz, this should give us a clock speed of 600Hz.
+    for (auto i = 0; i < 10; ++i)
+        cpu->cycle();
+
+    if (cpu->redraw) {
+        SDL_RenderClear(renderer);
+        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
+        for (auto y_i = 0; y_i < cpu->frame_buf.size(); ++y_i)
+            for (auto x_i = 0; x_i < cpu->frame_buf[y_i].size(); ++x_i)
+                if (cpu->frame_buf[y_i][x_i])
+                    SDL_RenderDrawPoint(renderer, x_i, y_i);
+
+        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+        SDL_RenderPresent(renderer);
+
+        cpu->redraw = false;
+    }
+
+    if (cpu->beep) {
+       std::cout << "BEEP" << std::endl; // TODO
+       cpu->beep = false;
+    }
+}
+
+
 int main(int argc, char *argv[]) {
-    Cpu cpu;
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Window *window;
+    SDL_CreateWindowAndRenderer(255, 255, 0, &window, &renderer);
 
-    if (argc != 2) {
-        std::cout << "Usage: ./chip8 <ROM file>" << std::endl;
-	return 1;
-    }
-    cpu.load(argv[1]);
-
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        std::cerr << "Initialization failed!" << std::endl;
-        return 1;
-    }
-
-    auto window = SDL_CreateWindow("chip8", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                              640, 320, SDL_WINDOW_SHOWN);
-    if (window == nullptr) {
-        std::cerr << "Could not create window: " << SDL_GetError() << std::endl;
-        SDL_Quit();
-        return 1;
-    }
-
-    auto renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     SDL_RenderSetLogicalSize(renderer, 64, 32);
 
-    SDL_Event event;
+    const int fps = -1; // enables optimizations for window.requestAnimationFrame()
+    emscripten_set_main_loop(main_loop, fps, 1);
 
-    while (true) {
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                SDL_Quit();
-                return 0;
-            }
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 
-            if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
-                const auto key = keymap.find(event.key.keysym.sym);
-                if (key == keymap.end())
-                    break;
-
-                else if (event.type == SDL_KEYDOWN)
-                    cpu.keys[key->second] = true;
-
-                else if (event.type == SDL_KEYUP)
-                    cpu.keys[key->second] = false;
-            }
-        }
-
-        cpu.cycle();
-
-        if (cpu.redraw) {
-            SDL_RenderClear(renderer);
-            SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
-            for (auto y_i = 0; y_i < cpu.frame_buf.size(); ++y_i)
-                for (auto x_i = 0; x_i < cpu.frame_buf[y_i].size(); ++x_i)
-                    if (cpu.frame_buf[y_i][x_i])
-                        SDL_RenderDrawPoint(renderer, x_i, y_i);
-
-            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-            SDL_RenderPresent(renderer);
-
-            cpu.redraw = false;
-        }
-
-        if (cpu.beep) {
-            std::cout << "beep" << std::endl;
-
-            cpu.beep = false;
-        }
-    }
+    return 0;
 }
