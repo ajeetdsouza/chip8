@@ -9,4 +9,4 @@ em++ -std=c++17 \
       --preload-file ./roms/ \
      -O3 \
      ./src/main.cpp ./src/cpu.cpp \
-     -o web/chip8.js
+     -o docs/chip8.js

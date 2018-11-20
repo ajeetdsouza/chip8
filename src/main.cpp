@@ -44,21 +44,22 @@ void main_loop() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
        if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
-           const auto key = keymap.find(event.key.keysym.sym);
-           if (key == keymap.end())
-               break;
+            if (const auto key = keymap.find(event.key.keysym.sym); key != keymap.end()) {
+                if (event.type == SDL_KEYDOWN)
+                    cpu->keys[key->second] = true;
 
-           else if (event.type == SDL_KEYDOWN)
-               cpu->keys[key->second] = true;
-
-           else if (event.type == SDL_KEYUP)
-               cpu->keys[key->second] = false;
+                else if (event.type == SDL_KEYUP)
+                    cpu->keys[key->second] = false;
+            }
        }
    }
 
-    // Assuming the browser refreshes the screen at 60Hz, this should give us a clock speed of 600Hz.
+    // Assuming the browser refreshes the screen at 60Hz, this should give us a clock speed of ~600Hz.
     for (auto i = 0; i < 10; ++i)
-        cpu->cycle();
+        cpu->run_opcode();
+
+    // Assuming the browser refreshes the screen at 60Hz, the timers should update at ~60Hz.
+    cpu->run_timers();
 
     if (cpu->redraw) {
         SDL_RenderClear(renderer);
@@ -86,7 +87,6 @@ int main(int argc, char *argv[]) {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Window *window;
     SDL_CreateWindowAndRenderer(255, 255, 0, &window, &renderer);
-
     SDL_RenderSetLogicalSize(renderer, 64, 32);
 
     const int fps = -1; // enables optimizations for window.requestAnimationFrame()

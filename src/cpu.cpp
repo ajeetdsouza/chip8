@@ -15,7 +15,7 @@
 
 Cpu::Cpu(const std::string &fname)
         : beep(false),
-          delay_timer(),
+          delay_timer(0),
           frame_buf_(),
           frame_buf(frame_buf_),
           i(0),
@@ -23,7 +23,7 @@ Cpu::Cpu(const std::string &fname)
           mem(),
           pc(0x200),
           redraw(true),
-          sound_timer(),
+          sound_timer(0),
           sp(0),
           stack(),
           v() {
@@ -33,20 +33,17 @@ Cpu::Cpu(const std::string &fname)
               std::istreambuf_iterator<char>(), mem.begin() + 0x200);
 }
 
-// Run one cycle
-void Cpu::cycle() {
-    const auto opcode = get_opcode();
-
-    run_opcode(opcode);
-    run_timers();
-}
-
 // Fetch one opcode
 uint16_t Cpu::get_opcode() const {
     return (mem[pc] << 8) | mem[pc + 1]; // big-endian
 }
 
 // Fetch and run one opcode
+void Cpu::run_opcode() {
+    const auto opcode = get_opcode();
+    run_opcode(opcode);
+}
+
 void Cpu::run_opcode(const uint16_t opcode) {
     switch (opcode & 0xF000) {
         case 0x0000:

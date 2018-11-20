@@ -39,12 +39,7 @@ private:
             0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     };
 
-
-    inline uint16_t get_opcode() const;
-
     void run_opcode(uint16_t);
-
-    void run_timers();
 
     void opcode_0x0NNN(uint16_t);
 
@@ -121,7 +116,11 @@ public:
 
     const decltype(frame_buf_) &frame_buf; // read-only frame buffer
 
-    void cycle();
+    uint16_t get_opcode() const;
+
+    void run_opcode();
+
+    void run_timers();
 
     std::bitset<16> keys; // store key presses
 
