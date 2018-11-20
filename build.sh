@@ -8,5 +8,5 @@ em++ -std=c++17 \
      -s FORCE_FILESYSTEM=1 \
       --preload-file ./roms/ \
      -O3 \
-     ./src/main.cpp ./src/cpu.cpp \
+     ./src/main.cpp ./src/cpu.cpp ./src/cpu_opcodes.cpp \
      -o docs/chip8.js
