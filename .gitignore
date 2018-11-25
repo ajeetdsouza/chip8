@@ -1,3 +1,7 @@
 cmake-build-debug/
 .idea/
 .vscode/
+site/chip8.data
+site/chip8.js
+site/chip8.wasm
+

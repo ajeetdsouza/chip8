@@ -22,11 +22,13 @@ void load_rom(const std::string &fname) { cpu.load(fname); }
 void main_loop() {
   // Get keypresses
   SDL_Event event;
-  while (SDL_PollEvent(&event))
-    if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP)
-      if (const auto key = keymap.find(event.key.keysym.sym);
-          key != keymap.end())
-        cpu.keys[key->second] = event.type == SDL_KEYDOWN;
+  while (SDL_PollEvent(&event)) {
+    if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
+      const auto key = keymap.find(event.key.keysym.sym);
+      if (key != keymap.end())
+        cpu.keys[key->second] = (event.type == SDL_KEYDOWN);
+    }
+  }
 
   // Assuming the browser refreshes the screen at 60Hz
   for (auto i = 0; i < 10; ++i)
