@@ -1,0 +1,25 @@
+dist: xenial
+language: cpp
+before_install:
+ - sudo apt-get update
+ - sudo apt-get install -y default-jre git g++ nodejs python2.7
+ - git clone https://github.com/juj/emsdk.git
+ - cd emsdk
+ - ./emsdk install latest
+ - ./emsdk activate latest
+ - source ./emsdk_env.sh
+ - cd ..
+cache:
+  directories:
+  - $HOME/.emscripten_cache/
+script:
+ - chmod +x ./build.sh
+ - export EMCC_NATIVE_OPTIMIZER=1
+ - ./build.sh
+deploy:
+  provider: pages
+  github_token: $GITHUB_TOKEN
+  local_dir: ./site/
+  skip_cleanup: true
+  target_branch: gh-pages
+  verbose: true

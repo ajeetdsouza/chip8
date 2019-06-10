@@ -35,7 +35,7 @@ const loadRom = () => {
 const listRom = () => {
     const romSelector = document.getElementById('rom-selector');
     romSelector.innerHTML = "";
-    ROMS.forEach((romName) => {
+    ROMS.forEach(romName => {
         const option = document.createElement('option');
         option.value = romName;
         option.innerHTML = romName;

@@ -1,8 +1,10 @@
 # chip8
 
-A WebAssembly CHIP8 emulator written in C++17 and SDL2. 
+[![Build Status](https://travis-ci.org/ajeetdsouza/chip8.svg?branch=master)](https://travis-ci.org/ajeetdsouza/chip8)
 
-[Demo](https://ajeetdsouza.gitlab.io/chip8/)
+A WebAssembly CHIP8 emulator written in C++17 and SDL2.
+
+[Demo](https://ajeetdsouza.github.io/chip8/)
 
 ## Building
 
@@ -12,6 +14,6 @@ A WebAssembly CHIP8 emulator written in C++17 and SDL2.
 ## Usage
 
 - Build the project.
-- Start up an HTTP server: `python3 -m http.server 5000` (this is not necessary if you use Firefox)
+- Start up an HTTP server from the `site` directory: `python3 -m http.server 5000`
 - Open `index.html` in a browser and load a game from the dropdown menu.
-- Since this is an emulator, the CHIP8 keys have been remapped to `1234`, `qwer`, `asdf` and `zxcv`. This might be an awkward key combination for some games, but it works.
+- CHIP8 keys have been remapped to `1234`, `qwer`, `asdf` and `zxcv`.
